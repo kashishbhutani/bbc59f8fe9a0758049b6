@@ -10,9 +10,12 @@ class Api::UsersController < ApplicationController
   def show
     begin
       @user = User.find_by(_id: params[:id])
+
+      raise "User Not Found With ID: #{params[:id]}" unless @user.present?
+
       render json: @user
     rescue StandardError => e
-      render json: "User With ID: #{params[:id]} Not Found !"
+      render json: { error: e.message.to_json }
     end
   end
 
@@ -56,7 +59,8 @@ class Api::UsersController < ApplicationController
   # GET api/typeahead/:input
   def typeahead
     search_options = params[:input].to_s.strip.downcase
-  
+
+    #TO-DO
     # @users = User.where("(LOWER(email) like :search_options OR LOWER(first_name) like :search_options OR LOWER(last_name) like :search_options)", search_options: search_options)
 
     render json: @users.present? ? @users : 'No Users Found !'
